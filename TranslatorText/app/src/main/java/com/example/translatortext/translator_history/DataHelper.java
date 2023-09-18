@@ -1,6 +1,5 @@
 package com.example.translatortext.translator_history;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,16 +8,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataHelper  extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "TranslationHistory.db"; // название бд
-    private static int SCHEMA = 1; // версия базы данных
-    static final String TABLE = "history"; // название таблицы в бд
-
+public class DataHelper extends SQLiteOpenHelper {
     // названия столбцов
     public static final String COLUMN_ID = "id";
+    public static final String COLUMN_OUTPUT_VALUE = "output_value";
+    static final String TABLE = "history"; // название таблицы в бд
+    private static final String DATABASE_NAME = "TranslationHistory.db"; // название бд
     public static String COLUMN_INPUT_VALUE = "input_value";
     public static String COLUMN_MODE = "mode";
-    public static final String COLUMN_OUTPUT_VALUE = "output_value";
+    private static int SCHEMA = 1; // версия базы данных
 
     public DataHelper(Context context) {
         super(context, DATABASE_NAME, null, SCHEMA);
@@ -27,7 +25,7 @@ public class DataHelper  extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL("CREATE TABLE "+TABLE+" (" + COLUMN_ID
+        db.execSQL("CREATE TABLE " + TABLE + " (" + COLUMN_ID
                 + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_INPUT_VALUE
                 + " TEXT," + COLUMN_MODE + " TEXT," + COLUMN_OUTPUT_VALUE + " TEXT) ;");
     }
@@ -37,21 +35,21 @@ public class DataHelper  extends SQLiteOpenHelper {
 
     }
 
-    public void addNote(SQLiteDatabase db, String inputValue, String mode, String outputValue){
-        inputValue = inputValue.replace("\n","");
-        mode = mode.replace("\n","");
-        outputValue = outputValue.replace("\n","");
+    public void addNote(SQLiteDatabase db, String inputValue, String mode, String outputValue) {
+        inputValue = inputValue.replace("\n", "");
+        mode = mode.replace("\n", "");
+        outputValue = outputValue.replace("\n", "");
         db.execSQL("INSERT INTO " + TABLE + " (" + COLUMN_INPUT_VALUE
-                + ", " + COLUMN_MODE + ", " + COLUMN_OUTPUT_VALUE + ") VALUES ('"+inputValue+"','"+mode+"','"+outputValue+"');");
+                + ", " + COLUMN_MODE + ", " + COLUMN_OUTPUT_VALUE + ") VALUES ('" + inputValue + "','" + mode + "','" + outputValue + "');");
     }
 
-    public List<History> getAllNotes(SQLiteDatabase db){
+    public List<History> getAllNotes(SQLiteDatabase db) {
         List<History> data = new ArrayList<History>();
 
-        Cursor dataCursor = db.rawQuery("select * from "+ DataHelper.TABLE, null);
+        Cursor dataCursor = db.rawQuery("select * from " + DataHelper.TABLE, null);
         dataCursor.moveToFirst();
 
-        for(int i=0; i<dataCursor.getCount() ; i++){
+        for (int i = 0; i < dataCursor.getCount(); i++) {
             History currentHistory = new History();
 
             currentHistory.setId(dataCursor.getInt(0));
@@ -66,11 +64,11 @@ public class DataHelper  extends SQLiteOpenHelper {
         return data;
     }
 
-    public void removeNote(SQLiteDatabase db, History history){
-        db.execSQL("delete from "+ DataHelper.TABLE +" where id="+history.getId()+";");
+    public void removeNote(SQLiteDatabase db, History history) {
+        db.execSQL("delete from " + DataHelper.TABLE + " where id=" + history.getId() + ";");
     }
 
-    public void removeAllNotes(SQLiteDatabase db){
-        db.execSQL("delete from "+ DataHelper.TABLE +";");
+    public void removeAllNotes(SQLiteDatabase db) {
+        db.execSQL("delete from " + DataHelper.TABLE + ";");
     }
 }

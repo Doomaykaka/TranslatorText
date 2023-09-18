@@ -85,7 +85,7 @@ public class HistoryActivity extends AppCompatActivity {
         deleteItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!nodeData.isEmpty()) {
+                if (!nodeData.isEmpty()) {
 
                     History currentHistory = new History();
 
@@ -104,7 +104,7 @@ public class HistoryActivity extends AppCompatActivity {
                     dataHelper.removeNote(db, currentHistory);
 
                     updateList();
-                }else{
+                } else {
                     Toast message = Toast.makeText(getApplicationContext(),
                             "Choose note", Toast.LENGTH_SHORT);
                     message.show();
@@ -115,7 +115,7 @@ public class HistoryActivity extends AppCompatActivity {
         clearHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(dataForPrinting.size()!=0){
+                if (dataForPrinting.size() != 0) {
                     dataHelper.removeAllNotes(db);
 
                     updateList();
@@ -126,7 +126,7 @@ public class HistoryActivity extends AppCompatActivity {
         List<History> data = dataHelper.getAllNotes(db);
         dataForPrinting = new ArrayList<String>();
 
-        for(History currentHistory: data){
+        for (History currentHistory : data) {
             String[] noteView = new String[4];
 
             noteView[0] = Integer.toString(currentHistory.getId());
@@ -134,7 +134,7 @@ public class HistoryActivity extends AppCompatActivity {
             noteView[2] = currentHistory.getMode();
             noteView[3] = currentHistory.getOutputValue();
 
-            dataForPrinting.add(noteView[0]+"\n"+noteView[1]+"\n"+noteView[2]+"\n"+noteView[3]);
+            dataForPrinting.add(noteView[0] + "\n" + noteView[1] + "\n" + noteView[2] + "\n" + noteView[3]);
         }
 
         historyListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dataForPrinting);
@@ -142,11 +142,11 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     // updating the list with records of previous operations
-    public void updateList(){
+    public void updateList() {
         dataForPrinting.clear();
         List<History> data = dataHelper.getAllNotes(db);
 
-        for(History currentHistory: data){
+        for (History currentHistory : data) {
             String[] noteView = new String[4];
 
             noteView[0] = Integer.toString(currentHistory.getId());
@@ -154,7 +154,7 @@ public class HistoryActivity extends AppCompatActivity {
             noteView[2] = currentHistory.getMode();
             noteView[3] = currentHistory.getOutputValue();
 
-            dataForPrinting.add(noteView[0]+"\n"+noteView[1]+"\n"+noteView[2]+"\n"+noteView[3]);
+            dataForPrinting.add(noteView[0] + "\n" + noteView[1] + "\n" + noteView[2] + "\n" + noteView[3]);
         }
 
         historyListAdapter.notifyDataSetChanged();

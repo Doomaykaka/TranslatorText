@@ -1,22 +1,10 @@
 package com.example.translatortext.translation_service;
 
-import android.content.res.Resources;
-import android.util.JsonReader;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.translatortext.R;
 import com.github.cliftonlabs.json_simple.JsonArray;
-import com.github.cliftonlabs.json_simple.JsonObject;
 import com.github.cliftonlabs.json_simple.Jsoner;
 
-import org.json.JSONArray;
-
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;

@@ -1,12 +1,12 @@
 package com.example.translatortext;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +16,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.translatortext.translation_service.TranslationService;
 import com.example.translatortext.translator_history.DataHelper;
@@ -27,8 +30,14 @@ public class MainActivity extends AppCompatActivity {
 
     SQLiteDatabase db;
 
+    ConstraintLayout back;
     Button toHistory;
     ListView modeListView;
+    View previousElement;
+    Drawable backgroundElementColorSelected;
+    Drawable backgroundElementColorNotSelected;
+    int textNotSelectedColor = 1;
+    int textSelectedColor = 2;
     EditText source;
     Button translate;
     TextView result;
@@ -40,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        back = (ConstraintLayout) findViewById(R.id.root);
         toHistory = (Button) findViewById(R.id.historyButton);
         modeListView = (ListView) findViewById(R.id.modeList);
         source = (EditText) findViewById(R.id.editTextSource);
@@ -53,6 +63,11 @@ public class MainActivity extends AppCompatActivity {
         modeListAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, modeList);
         modeListView.setAdapter(modeListAdapter);
 
+        backgroundElementColorSelected = translate.getBackground();
+        backgroundElementColorNotSelected = back.getBackground();
+        textSelectedColor = translate.getCurrentTextColor();
+        textNotSelectedColor = ((textSelectedColor & 0xFF000000) | (~textSelectedColor & 0x00FFFFFF));
+
         toHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,15 +79,24 @@ public class MainActivity extends AppCompatActivity {
         modeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object listItem = modeListView.getItemAtPosition(position);
-                mode = listItem.toString();
+                if(view != previousElement){
+                    Object listItem = modeListView.getItemAtPosition(position);
+                    mode = listItem.toString();
+                    view.setBackground(backgroundElementColorSelected);
+                    ((TextView) view).setTextColor(textSelectedColor);
+                    if (previousElement != null) {
+                        previousElement.setBackground(backgroundElementColorNotSelected);
+                        ((TextView) previousElement).setTextColor(textNotSelectedColor);
+                    }
+                    previousElement = view;
+                }
             }
         });
 
         translate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if((!source.getText().toString().isEmpty())&&(!mode.isEmpty())){
+                if ((!source.getText().toString().isEmpty()) && (!mode.isEmpty())) {
                     String inputText = source.getText().toString();
                     String resultText = translationService.translate(inputText, mode);
                     result.setText(resultText);
@@ -81,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
 
                     db = dataHelper.getWritableDatabase();
 
-                    dataHelper.addNote(db,inputText,mode,resultText);
-                }else{
+                    dataHelper.addNote(db, inputText, mode, resultText);
+                } else {
                     Toast message = Toast.makeText(getApplicationContext(),
                             "Choose mode and write text", Toast.LENGTH_SHORT);
                     message.show();
@@ -130,12 +154,12 @@ public class MainActivity extends AppCompatActivity {
 
         ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         ClipData clip = clipboard.getPrimaryClip();
-        if(clip!=null){
-            if(clip.getItemAt(0)!=null) {
+        if (clip != null) {
+            if (clip.getItemAt(0) != null) {
                 ClipData.Item item = clip.getItemAt(0);
-                if(item.getText()!=null){
+                if (item.getText() != null) {
                     String text = item.getText().toString();
-                    if((text.contains("\n"))&&(text.split("\n").length>=4)){
+                    if ((text.contains("\n")) && (text.split("\n").length >= 4)) {
                         mode = text.split("\n")[2];
                         source.setText(text.split("\n")[1]);
                         result.setText(text.split("\n")[3]);

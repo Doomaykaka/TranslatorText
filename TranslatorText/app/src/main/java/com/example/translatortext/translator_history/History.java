@@ -6,15 +6,15 @@ public class History {
     private String mode;
     private String outputValue;
 
-    public History(){
+    public History() {
 
     }
 
-    public History(int id, String inputValue, String mode, String outputValue){
-       this.id=id;
-       this.inputValue=inputValue;
-       this.mode=mode;
-       this.outputValue=outputValue;
+    public History(int id, String inputValue, String mode, String outputValue) {
+        this.id = id;
+        this.inputValue = inputValue;
+        this.mode = mode;
+        this.outputValue = outputValue;
     }
 
     public int getId() {
@@ -41,7 +41,11 @@ public class History {
         this.outputValue = outputValue;
     }
 
-    public String getMode() {return mode;}
+    public String getMode() {
+        return mode;
+    }
 
-    public void setMode(String mode) {this.mode = mode;}
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
 }
