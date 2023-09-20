@@ -1,67 +1,49 @@
 package com.example.translatortext.translation_service;
 
-import com.github.cliftonlabs.json_simple.JsonObject;
-import com.github.cliftonlabs.json_simple.Jsoner;
-
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.net.ssl.HttpsURLConnection;
+import retrofit2.Call;
+import retrofit2.Response;
 
 // a thread for working with the network
 public class TranslatorThread implements Runnable {
-    String result;
-
-    String text;
+    Call<List<String>> callSyncModeList;
+    Call<TranslateResult> callSyncTranslate;
+    List<String> modeListResult = new ArrayList<String>();
+    String translateResult = "";
     String mode;
-    String apiBaseUrl;
+
 
     // thread body
     @Override
     public void run() {
+        switch (mode) {
+            case "getModeList":
+                getModeList();
+                break;
+            case "postTranslate":
+                postTranslate();
+                break;
+        }
+    }
+
+    private void getModeList() {
         try {
-            // Create connection
-            HttpsURLConnection apiConnection = null;
-            apiConnection = (HttpsURLConnection) new URL(apiBaseUrl + "translate").openConnection();
-
-            // Create the data
-            String textJson = "{\n" +
-                    "  \"text\": \"" + text + "\",\n" +
-                    "  \"mode\": \"" + mode + "\"\n" +
-                    "}";
-
-            // Enable writing
-            apiConnection.setDoOutput(true);
-            apiConnection.setDoInput(true);
-            // Set method
-            apiConnection.setRequestMethod("POST");
-            apiConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            // Write the data
-
-            OutputStream out;
-            out = apiConnection.getOutputStream();
-            out.write(textJson.getBytes("UTF-8"));
-
-            out.flush();
-            out.close();
-
-            //get result
-
-            InputStreamReader responseBodyReader = new InputStreamReader(apiConnection.getInputStream());
-            Scanner s = new Scanner(responseBodyReader).useDelimiter("\\A");
-
-            JsonObject response = Jsoner.deserialize(s.hasNext() ? s.next() : "", new JsonObject());
-            if (response.containsKey("result"))
-                result = response.getString(Jsoner.mintJsonKey("result", ""));
-
-            apiConnection.disconnect();
+            Response<List<String>> response = callSyncModeList.execute();
+            modeListResult = response.body();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (IllegalStateException i) {
-            i.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void postTranslate() {
+        try {
+            Response<TranslateResult> response = callSyncTranslate.execute();
+            translateResult = ((TranslateResult) response.body()).getResult();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

@@ -5,7 +5,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         modeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(view != previousElement){
+                if (view != previousElement) {
                     Object listItem = modeListView.getItemAtPosition(position);
                     mode = listItem.toString();
                     view.setBackground(backgroundElementColorSelected);
